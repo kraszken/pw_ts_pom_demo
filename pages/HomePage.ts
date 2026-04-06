@@ -1,11 +1,13 @@
 import { Locator, Page } from "@playwright/test";
 
 export class HomePage {
-  readonly page: Page;
-  readonly sidenavUsername: Locator;
+  public readonly sidenavUsername: Locator;
+  public readonly notificationsBadge: Locator;
+  public readonly notificationsLink: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(public readonly page: Page) {
     this.sidenavUsername = page.getByTestId("sidenav-username");
+    this.notificationsBadge = page.getByTestId("nav-top-notifications-count");
+    this.notificationsLink = page.getByTestId("sidenav-notifications");
   }
 }

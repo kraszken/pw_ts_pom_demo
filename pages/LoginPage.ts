@@ -1,68 +1,79 @@
-import { Locator, Page, expect } from "@playwright/test";
-import { env } from "process";
+import { Locator, Page, test } from "@playwright/test";
 
 export class LoginPage {
-  readonly page: Page;
-
-  private readonly usernameField: Locator;
-  private readonly passwordField: Locator;
   public readonly signInButton: Locator;
-  private readonly rememberMeButton: Locator;
-  private readonly signUpLink: Locator;
   public readonly usernameHelper: Locator;
   public readonly passwordHelper: Locator;
   public readonly signinError: Locator;
+  public readonly passwordField: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  private readonly usernameField: Locator;
+  private readonly signUpLink: Locator;
+
+  constructor(public readonly page: Page) {
     this.usernameField = page.getByRole("textbox", { name: "Username" });
     this.passwordField = page.getByRole("textbox", { name: "Password" });
     this.signInButton = page.getByTestId("signin-submit");
-    this.rememberMeButton = page.getByTestId("signin-remember-me");
     this.signUpLink = page.getByTestId("signup");
     this.usernameHelper = page.locator("#username-helper-text");
     this.passwordHelper = page.locator("#password-helper-text");
     this.signinError = page.getByTestId("signin-error");
   }
 
-  async navigate(): Promise<void> {
-    await this.page.goto(env.LOGIN_URL!);
-    await this.isLoginPageReady();
+  public async navigate(): Promise<void> {
+    await test.step("Navigate to Login Page", async () => {
+      await this.page.goto("/signin");
+    });
   }
 
-  private async isLoginPageReady(): Promise<void> {
-    await expect.soft(this.page).toHaveURL(`${env.LOGIN_URL}signin`);
-    await this.usernameField.waitFor();
-    await this.passwordField.waitFor();
-    await this.signInButton.waitFor();
-    await this.rememberMeButton.waitFor();
-    await this.signUpLink.waitFor();
-    await expect.soft(this.page).toHaveTitle("Cypress Real World App");
+  public async fillUsername(username: string): Promise<void> {
+    await test.step("Fill username", async () => {
+      await this.usernameField.fill(username);
+    });
   }
 
-  async enterUsername(username: string): Promise<void> {
-    await this.usernameField.fill(username);
+  public async fillPassword(password: string): Promise<void> {
+    await test.step("Fill password", async () => {
+      await this.passwordField.fill(password);
+    });
   }
 
-  async enterPassword(password: string): Promise<void> {
-    await this.passwordField.fill(password);
+  public async clickSignInButton(): Promise<void> {
+    await test.step("Click sign in button", async () => {
+      await this.signInButton.click();
+    });
   }
 
-  async clickSignInButton(): Promise<void> {
-    await this.signInButton.click();
+  public async login(username: string, password: string): Promise<void> {
+    await test.step(`Perform full login for user: ${username}`, async () => {
+      await this.usernameField.fill(username);
+      await this.passwordField.fill(password);
+      await this.signInButton.click();
+    });
   }
 
-  async login(username: string, password: string): Promise<void> {
-    await this.enterUsername(username);
-    await this.enterPassword(password);
-    await this.clickSignInButton();
+  public async triggerFocusLost(
+    inputName: "username" | "password",
+  ): Promise<void> {
+    await test.step(`Trigger focus lost on ${inputName} field`, async () => {
+      const inputField =
+        inputName === "username" ? this.usernameField : this.passwordField;
+      await inputField.click();
+      await inputField.blur();
+    });
   }
 
-  async inputFocusLost(inputName: "username" | "password"): Promise<void> {
-    const inputField =
-      inputName === "username" ? this.usernameField : this.passwordField;
+  public async enterPasswordAndSubmit(password: string): Promise<void> {
+    await test.step("Enter password and press Enter key", async () => {
+      await this.passwordField.fill(password);
+      await this.passwordField.press("Enter");
+    });
+  }
 
-    await inputField.click();
-    await inputField.blur();
+  public async goToSignup(): Promise<void> {
+    await test.step("Click sign up link", async () => {
+      await this.signUpLink.focus();
+      await this.signUpLink.click();
+    });
   }
 }
