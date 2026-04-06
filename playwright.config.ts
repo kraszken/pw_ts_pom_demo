@@ -17,7 +17,7 @@ export default defineConfig({
   expect: { timeout: 4 * 1000 },
   use: {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
     viewport: { width: 1920, height: 1080 },
     testIdAttribute: "data-test",
   },

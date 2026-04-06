@@ -1,8 +1,6 @@
-// tsconfig.json
 {
   "compilerOptions": {
     "target": "ESNext",
-    // Ustawiamy nowoczesny system modułów i ich rozwiązywania
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "strict": true,
