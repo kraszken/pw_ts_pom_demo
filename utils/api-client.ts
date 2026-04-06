@@ -36,7 +36,10 @@ export class ApiClient {
       },
     });
 
-    expect(response.status()).toBe(201);
+    expect(
+      response.ok(),
+      `API Error creating user: ${await response.text()}`,
+    ).toBeTruthy();
     const body = await response.json();
 
     return body.user as User;
@@ -44,7 +47,7 @@ export class ApiClient {
 
   public async getCurrentUserId(): Promise<string> {
     const response = await this.request.get(`${this.backendUrl}/checkAuth`);
-    expect(response.status()).toBe(200);
+    expect(response.ok(), `Auth Error: ${await response.text()}`).toBeTruthy();
     const body = await response.json();
     return body.user.id;
   }
@@ -56,7 +59,10 @@ export class ApiClient {
     const loginResponse = await context.post(`/login`, {
       data: { username, password: env.USERPASSWORD || "s3cret" },
     });
-    expect(loginResponse.status()).toBe(200);
+    expect(
+      loginResponse.ok(),
+      `Login Error: ${await loginResponse.text()}`,
+    ).toBeTruthy();
 
     const graphqlResponse = await context.post(`/graphql`, {
       data: {
@@ -70,7 +76,10 @@ export class ApiClient {
           "mutation CreateBankAccount($bankName: String!, $routingNumber: String!, $accountNumber: String!) {\n  createBankAccount(bankName: $bankName, routingNumber: $routingNumber, accountNumber: $accountNumber) {\n    id\n  }\n}",
       },
     });
-    expect(graphqlResponse.status()).toBe(200);
+    expect(
+      graphqlResponse.ok(),
+      `GraphQL Error: ${await graphqlResponse.text()}`,
+    ).toBeTruthy();
     await context.dispose();
   }
 
@@ -87,7 +96,10 @@ export class ApiClient {
     const loginResponse = await context.post(`/login`, {
       data: { username, password: env.USERPASSWORD || "s3cret" },
     });
-    expect(loginResponse.status()).toBe(200);
+    expect(
+      loginResponse.ok(),
+      `Login Error: ${await loginResponse.text()}`,
+    ).toBeTruthy();
 
     const transactionResponse = await context.post(`/transactions`, {
       data: {
@@ -98,7 +110,10 @@ export class ApiClient {
         privacyLevel: "public",
       },
     });
-    expect(transactionResponse.status()).toBe(200);
+    expect(
+      transactionResponse.ok(),
+      `Transaction Error: ${await transactionResponse.text()}`,
+    ).toBeTruthy();
     const body = await transactionResponse.json();
 
     await context.dispose();
@@ -115,10 +130,16 @@ export class ApiClient {
     const loginResponse = await context.post(`/login`, {
       data: { username, password: env.USERPASSWORD || "s3cret" },
     });
-    expect(loginResponse.status()).toBe(200);
+    expect(
+      loginResponse.ok(),
+      `Login Error: ${await loginResponse.text()}`,
+    ).toBeTruthy();
 
     const likeResponse = await context.post(`/likes/${transactionId}`);
-    expect(likeResponse.status()).toBe(200);
+    expect(
+      likeResponse.ok(),
+      `Like Error: ${await likeResponse.text()}`,
+    ).toBeTruthy();
     await context.dispose();
   }
 }

@@ -1,5 +1,4 @@
 import { env } from "process";
-import database from "../data/database.json";
 import { ValidationData } from "../data/validation-data";
 import { expect, test } from "../fixtures/test-base";
 import { User } from "../types/models";
@@ -7,10 +6,11 @@ import { User } from "../types/models";
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test.describe("Login Form Validation", () => {
-  const validUser: User = database.users[0];
+  let validUser: User;
   const { invalid, expectedErrors } = ValidationData.login;
 
-  test.beforeEach(async ({ loginPage }) => {
+  test.beforeEach(async ({ apiClient, loginPage }) => {
+    validUser = await apiClient.createUniqueUser("LoginUser");
     await loginPage.navigate();
   });
 

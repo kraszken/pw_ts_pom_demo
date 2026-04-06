@@ -48,7 +48,9 @@ export class TransactionCreatePage {
     await test.step("Navigate to Create Transaction Page", async () => {
       await this.page.goto("/");
       const usersResponse = this.page.waitForResponse(
-        (r) => r.url().includes("/users") && r.request().method() === "GET",
+        (r) =>
+          new URL(r.url()).pathname === "/users" &&
+          r.request().method() === "GET",
       );
       await this.newTransactionButton.click();
       await usersResponse;
@@ -57,8 +59,8 @@ export class TransactionCreatePage {
 
   public async searchUser(query: string): Promise<void> {
     await test.step(`Search for user: ${query}`, async () => {
-      const searchResponse = this.page.waitForResponse((r) =>
-        r.url().includes("/users/search"),
+      const searchResponse = this.page.waitForResponse(
+        (r) => new URL(r.url()).pathname === "/users/search",
       );
       await this.searchInput.fill(query);
       await searchResponse;
@@ -126,7 +128,8 @@ export class TransactionCreatePage {
     await test.step("Submit payment", async () => {
       const responsePromise = this.page.waitForResponse(
         (r) =>
-          r.url().includes("/transactions") && r.request().method() === "POST",
+          new URL(r.url()).pathname === "/transactions" &&
+          r.request().method() === "POST",
       );
       await this.submitPaymentButton.click();
       await responsePromise;
@@ -137,7 +140,8 @@ export class TransactionCreatePage {
     await test.step("Submit request", async () => {
       const responsePromise = this.page.waitForResponse(
         (r) =>
-          r.url().includes("/transactions") && r.request().method() === "POST",
+          new URL(r.url()).pathname === "/transactions" &&
+          r.request().method() === "POST",
       );
       await this.submitRequestButton.click();
       await responsePromise;

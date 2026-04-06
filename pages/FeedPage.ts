@@ -23,7 +23,8 @@ export class FeedPage {
     await test.step("Click Personal tab", async () => {
       const responsePromise = this.page.waitForResponse(
         (r) =>
-          r.url().includes("/transactions") && r.request().method() === "GET",
+          new URL(r.url()).pathname === "/transactions" &&
+          r.request().method() === "GET",
       );
       await this.personalTab.click();
       await responsePromise;
@@ -34,7 +35,7 @@ export class FeedPage {
     await test.step("Click Contacts tab", async () => {
       const responsePromise = this.page.waitForResponse(
         (r) =>
-          r.url().includes("/transactions/contacts") &&
+          new URL(r.url()).pathname === "/transactions/contacts" &&
           r.request().method() === "GET",
       );
       await this.contactsTab.click();
@@ -46,7 +47,7 @@ export class FeedPage {
     await test.step("Click Public tab", async () => {
       const responsePromise = this.page.waitForResponse(
         (r) =>
-          r.url().includes("/transactions/public") &&
+          new URL(r.url()).pathname === "/transactions/public" &&
           r.request().method() === "GET",
       );
       await this.publicTab.click();

@@ -42,7 +42,7 @@ test.describe("Notifications", () => {
 
     await expect(homePage.notificationsBadge).toHaveText("2");
 
-    await homePage.notificationsLink.click();
+    await homePage.clickNotificationsLink();
 
     await expect(notificationsPage.notificationItems).toHaveCount(2);
   });
