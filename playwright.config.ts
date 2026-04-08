@@ -18,7 +18,6 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
     trace: "retain-on-failure",
-    viewport: { width: 1920, height: 1080 },
     testIdAttribute: "data-test",
   },
   projects: [
@@ -26,7 +25,11 @@ export default defineConfig({
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
+        viewport: { width: 1920, height: 1080 },
         storageState: ".auth/sender.json",
+        launchOptions: {
+          args: ["--window-size=1920,1080"],
+        },
       },
     },
   ],
