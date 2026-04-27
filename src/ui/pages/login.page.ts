@@ -15,14 +15,14 @@ export class LoginPage extends BasePage {
 
     this.usernameInput = new InputComponent(
       page,
-      page.getByRole("textbox", { name: "Username" }),
-      "#username-helper-text",
+      page.locator("#username"),
+      page.locator("#username-helper-text"),
     );
 
     this.passwordInput = new InputComponent(
       page,
-      page.getByRole("textbox", { name: "Password" }),
-      "#password-helper-text",
+      page.locator("#password"),
+      page.locator("#password-helper-text"),
       true,
     );
 

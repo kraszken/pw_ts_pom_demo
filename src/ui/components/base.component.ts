@@ -6,9 +6,6 @@ export abstract class BaseComponent {
     protected readonly rootLocator: Locator,
   ) {}
 
-  /**
-   * Zwraca główny lokator komponentu, np. do sprawdzenia widoczności w asercjach.
-   */
   public get locator(): Locator {
     return this.rootLocator;
   }

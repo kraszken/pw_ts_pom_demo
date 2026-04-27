@@ -7,11 +7,14 @@ export class InputComponent extends BaseComponent {
   constructor(
     page: Page,
     rootLocator: Locator,
-    helperSelector: string,
+    helperLocator: Locator | string,
     private readonly isMasked: boolean = false,
   ) {
     super(page, rootLocator);
-    this.helperText = page.locator(helperSelector);
+    this.helperText =
+      typeof helperLocator === "string"
+        ? page.locator(helperLocator)
+        : helperLocator;
   }
 
   public async fill(value: string): Promise<void> {

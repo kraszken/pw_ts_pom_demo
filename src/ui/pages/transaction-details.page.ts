@@ -15,23 +15,23 @@ export class TransactionDetailsPage extends BasePage {
     super(page, "");
 
     this.detailHeader = page.getByTestId("transaction-detail-header");
-    this.acceptButton = page.locator(
-      '[data-test^="transaction-accept-request"]',
-    );
-    this.rejectButton = page.locator(
-      '[data-test^="transaction-reject-request"]',
-    );
-    this.likeButton = page.locator('[data-test^="transaction-like-button"]');
-    this.likeCount = page.locator('[data-test^="transaction-like-count"]');
-    this.commentInput = page.locator(
-      '[data-test^="transaction-comment-input"]',
-    );
+
+    this.acceptButton = page.getByTestId(/transaction-accept-request-.*/);
+    this.rejectButton = page.getByTestId(/transaction-reject-request-.*/);
+    this.likeButton = page.getByTestId(/transaction-like-button-.*/);
+    this.likeCount = page.getByTestId(/transaction-like-count-.*/);
+    this.commentInput = page.getByTestId(/transaction-comment-input-.*/);
+
     this.commentsList = page.getByTestId("comments-list");
   }
 
   public async acceptRequest(): Promise<void> {
     await test.step("Accept transaction request", async () => {
-      const responsePromise = this.page.waitForResponse("**/transactions/*");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().includes("/transactions/") &&
+          res.request().method() === "PATCH",
+      );
       await this.acceptButton.click();
       await responsePromise;
     });
@@ -39,7 +39,11 @@ export class TransactionDetailsPage extends BasePage {
 
   public async rejectRequest(): Promise<void> {
     await test.step("Reject transaction request", async () => {
-      const responsePromise = this.page.waitForResponse("**/transactions/*");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().includes("/transactions/") &&
+          res.request().method() === "PATCH",
+      );
       await this.rejectButton.click();
       await responsePromise;
     });
@@ -47,7 +51,10 @@ export class TransactionDetailsPage extends BasePage {
 
   public async clickLike(): Promise<void> {
     await test.step("Click like button", async () => {
-      const responsePromise = this.page.waitForResponse("**/likes/*");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().includes("/likes/") && res.request().method() === "POST",
+      );
       await this.likeButton.click();
       await responsePromise;
     });
@@ -55,7 +62,10 @@ export class TransactionDetailsPage extends BasePage {
 
   public async submitComment(text: string): Promise<void> {
     await test.step(`Submit a comment: ${text}`, async () => {
-      const responsePromise = this.page.waitForResponse("**/comments/*");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().includes("/comments/") && res.request().method() === "POST",
+      );
       await this.commentInput.fill(text);
       await this.commentInput.press("Enter");
       await responsePromise;

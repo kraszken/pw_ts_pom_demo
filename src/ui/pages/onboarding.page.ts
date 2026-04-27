@@ -14,29 +14,29 @@ export class OnboardingPage extends BasePage {
   public readonly accountNumberInput: InputComponent;
 
   constructor(page: Page) {
-    super(page, "/"); // Onboarding pojawia się po zalogowaniu na ścieżce głównej
+    super(page, "/");
 
     this.dialog = page.getByTestId("user-onboarding-dialog");
     this.dialogTitle = page.getByTestId("user-onboarding-dialog-title");
     this.nextButton = page.getByTestId("user-onboarding-next");
-    this.submitButton = page.locator('[data-test*="submit"]');
+    this.submitButton = page.getByTestId("bankaccount-submit");
 
     this.bankNameInput = new InputComponent(
       page,
-      page.locator('[data-test*="bankName-input"] input'),
-      '[id*="bankName-input-helper-text"]',
+      page.getByTestId("bankaccount-bankName-input").locator("input"),
+      page.locator("#bankaccount-bankName-input-helper-text"),
     );
 
     this.routingNumberInput = new InputComponent(
       page,
-      page.locator('[data-test*="routingNumber-input"] input'),
-      '[id*="routingNumber-input-helper-text"]',
+      page.getByTestId("bankaccount-routingNumber-input").locator("input"),
+      page.locator("#bankaccount-routingNumber-input-helper-text"),
     );
 
     this.accountNumberInput = new InputComponent(
       page,
-      page.locator('[data-test*="accountNumber-input"] input'),
-      '[id*="accountNumber-input-helper-text"]',
+      page.getByTestId("bankaccount-accountNumber-input").locator("input"),
+      page.locator("#bankaccount-accountNumber-input-helper-text"),
     );
   }
 

@@ -20,20 +20,20 @@ export class BankAccountsPage extends BasePage {
 
     this.bankNameInput = new InputComponent(
       page,
-      page.locator('[data-test="bankaccount-bankName-input"] input'),
-      "#bankaccount-bankName-input-helper-text",
+      page.getByTestId("bankaccount-bankName-input").locator("input"),
+      page.locator("#bankaccount-bankName-input-helper-text"),
     );
 
     this.routingNumberInput = new InputComponent(
       page,
-      page.locator('[data-test="bankaccount-routingNumber-input"] input'),
-      "#bankaccount-routingNumber-input-helper-text",
+      page.getByTestId("bankaccount-routingNumber-input").locator("input"),
+      page.locator("#bankaccount-routingNumber-input-helper-text"),
     );
 
     this.accountNumberInput = new InputComponent(
       page,
-      page.locator('[data-test="bankaccount-accountNumber-input"] input'),
-      "#bankaccount-accountNumber-input-helper-text",
+      page.getByTestId("bankaccount-accountNumber-input").locator("input"),
+      page.locator("#bankaccount-accountNumber-input-helper-text"),
     );
   }
 

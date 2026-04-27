@@ -12,12 +12,19 @@ export class FeedPage extends BasePage {
     this.personalTab = page.getByTestId("nav-personal-tab");
     this.contactsTab = page.getByTestId("nav-contacts-tab");
     this.publicTab = page.getByTestId("nav-public-tab");
+
     this.transactionItems = page.locator('[data-test^="transaction-item-"]');
   }
 
   public async clickPersonalTab(): Promise<void> {
     await test.step("Click Personal tab", async () => {
-      const responsePromise = this.page.waitForResponse("**/transactions");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().includes("/transactions") &&
+          !res.url().includes("/contacts") &&
+          !res.url().includes("/public") &&
+          res.request().method() === "GET",
+      );
       await this.personalTab.click();
       await responsePromise;
     });
@@ -26,7 +33,9 @@ export class FeedPage extends BasePage {
   public async clickContactsTab(): Promise<void> {
     await test.step("Click Contacts tab", async () => {
       const responsePromise = this.page.waitForResponse(
-        "**/transactions/contacts",
+        (res) =>
+          res.url().includes("/transactions/contacts") &&
+          res.request().method() === "GET",
       );
       await this.contactsTab.click();
       await responsePromise;
@@ -36,7 +45,9 @@ export class FeedPage extends BasePage {
   public async clickPublicTab(): Promise<void> {
     await test.step("Click Public tab", async () => {
       const responsePromise = this.page.waitForResponse(
-        "**/transactions/public",
+        (res) =>
+          res.url().includes("/transactions/public") &&
+          res.request().method() === "GET",
       );
       await this.publicTab.click();
       await responsePromise;
@@ -45,9 +56,7 @@ export class FeedPage extends BasePage {
 
   public async openTransactionAtIndex(index: number): Promise<void> {
     await test.step(`Open transaction at index ${index}`, async () => {
-      const responsePromise = this.page.waitForResponse("**/transactions/*");
       await this.transactionItems.nth(index).click();
-      await responsePromise;
     });
   }
 }

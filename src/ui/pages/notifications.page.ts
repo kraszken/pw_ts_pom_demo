@@ -21,7 +21,11 @@ export class NotificationsPage extends BasePage {
 
   public async markAsReadAtIndex(index: number): Promise<void> {
     await test.step(`Mark notification as read at index ${index}`, async () => {
-      const responsePromise = this.page.waitForResponse("**/notifications/*");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().includes("/notifications/") &&
+          res.request().method() === "PATCH",
+      );
       await this.markAsReadButtons.nth(index).click();
       await responsePromise;
     });

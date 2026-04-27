@@ -21,7 +21,12 @@ test.describe("Bank Accounts", () => {
     await app.bankAccountsPage.navigate();
     await app.bankAccountsPage.initiateNewAccountCreation();
 
-    const responsePromise = page.waitForResponse("**/graphql");
+    const responsePromise = page.waitForResponse(
+      (res) =>
+        res.url().includes("/graphql") &&
+        res.request().method() === "POST" &&
+        (res.request().postData()?.includes("CreateBankAccount") ?? false),
+    );
     await app.bankAccountsPage.fillAndSubmitAccountDetails(
       accountData.bankName,
       accountData.routingNumber,
@@ -44,7 +49,6 @@ test.describe("Bank Accounts", () => {
       expectedErrors.bankNameLength,
     );
 
-    // .clear() jest tutaj celowe - testujemy asercję po całkowitym usunięciu tekstu
     await app.bankAccountsPage.bankNameInput.clear();
     await app.bankAccountsPage.bankNameInput.blur();
     await expect(app.bankAccountsPage.bankNameInput.helperText).toHaveText(
@@ -94,7 +98,12 @@ test.describe("Bank Accounts", () => {
     await app.bankAccountsPage.navigate();
     await app.bankAccountsPage.initiateNewAccountCreation();
 
-    const createPromise = page.waitForResponse("**/graphql");
+    const createPromise = page.waitForResponse(
+      (res) =>
+        res.url().includes("/graphql") &&
+        res.request().method() === "POST" &&
+        (res.request().postData()?.includes("CreateBankAccount") ?? false),
+    );
     await app.bankAccountsPage.fillAndSubmitAccountDetails(
       accountData.bankName,
       accountData.routingNumber,
@@ -102,7 +111,12 @@ test.describe("Bank Accounts", () => {
     );
     await createPromise;
 
-    const deletePromise = page.waitForResponse("**/graphql");
+    const deletePromise = page.waitForResponse(
+      (res) =>
+        res.url().includes("/graphql") &&
+        res.request().method() === "POST" &&
+        (res.request().postData()?.includes("DeleteBankAccount") ?? false),
+    );
     await app.bankAccountsPage.deleteAccountByName(accountData.bankName);
     await deletePromise;
 

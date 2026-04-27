@@ -45,7 +45,6 @@ test.describe("Notifications", () => {
   });
 
   test("marks notification as read", async ({ app }) => {
-    // FIX: Dodano brakującą nawigację do strony powiadomień przed asercjami
     await app.notificationsPage.navigate();
 
     await expect(app.notificationsPage.notificationItems).toHaveCount(2);
@@ -58,7 +57,6 @@ test.describe("Notifications", () => {
   test("displays empty state when all notifications are read", async ({
     app,
   }) => {
-    // FIX: Dodano brakującą nawigację
     await app.notificationsPage.navigate();
 
     const count = await app.notificationsPage.notificationItems.count();

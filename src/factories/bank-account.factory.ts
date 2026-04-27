@@ -7,9 +7,6 @@ export interface BankAccountPayload {
 }
 
 export class BankAccountFactory {
-  /**
-   * Generates a randomized, valid bank account payload.
-   */
   public static createValidBankAccount(): BankAccountPayload {
     return {
       bankName: `${faker.company.name()} Bank`,

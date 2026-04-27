@@ -1,4 +1,4 @@
-import { Locator, Page, test } from "@playwright/test";
+import { expect, Locator, Page, test } from "@playwright/test";
 import { InputComponent } from "../components/input.component";
 import { BasePage } from "./base.page";
 
@@ -23,21 +23,21 @@ export class TransactionCreatePage extends BasePage {
 
     this.amountInput = new InputComponent(
       page,
-      page.locator('[data-test="transaction-create-amount-input"] input'),
-      "#transaction-create-amount-input-helper-text",
+      page.getByTestId("transaction-create-amount-input").locator("input"),
+      page.locator("#transaction-create-amount-input-helper-text"),
     );
 
     this.descriptionInput = new InputComponent(
       page,
-      page.locator('[data-test="transaction-create-description-input"] input'),
-      "#transaction-create-description-input-helper-text",
+      page.getByTestId("transaction-create-description-input").locator("input"),
+      page.locator("#transaction-create-description-input-helper-text"),
     );
 
-    this.submitPaymentButton = page.locator(
-      '[data-test="transaction-create-submit-payment"]',
+    this.submitPaymentButton = page.getByTestId(
+      "transaction-create-submit-payment",
     );
-    this.submitRequestButton = page.locator(
-      '[data-test="transaction-create-submit-request"]',
+    this.submitRequestButton = page.getByTestId(
+      "transaction-create-submit-request",
     );
     this.successAlert = page.getByTestId("alert-bar-success");
   }
@@ -45,9 +45,17 @@ export class TransactionCreatePage extends BasePage {
   public override async navigate(): Promise<void> {
     await test.step("Navigate to Create Transaction Page", async () => {
       await this.page.goto(this.url);
-      const usersResponse = this.page.waitForResponse("**/users");
+
+      const usersResponse = this.page.waitForResponse(
+        (res) =>
+          res.url().endsWith("/users") && res.request().method() === "GET",
+      );
       await this.newTransactionButton.click();
       await usersResponse;
+
+      await expect(
+        this.userList.locator('[data-test^="user-list-item-"]').first(),
+      ).toBeVisible();
     });
   }
 
@@ -57,11 +65,13 @@ export class TransactionCreatePage extends BasePage {
       .filter({ hasText: name });
   }
 
-  // Linia ~60
   public async searchUser(query: string): Promise<void> {
     await test.step(`Search for user: ${query}`, async () => {
-      // FIX: Używamy Regex, aby złapać URL z parametrami zapytania (np. ?q=John)
-      const searchResponse = this.page.waitForResponse(/users\/search/);
+      const searchResponse = this.page.waitForResponse(
+        (res) =>
+          res.url().includes("/users/search") &&
+          res.request().method() === "GET",
+      );
       await this.searchInput.fill(query);
       await searchResponse;
     });
@@ -91,7 +101,11 @@ export class TransactionCreatePage extends BasePage {
 
   public async submitPayment(): Promise<void> {
     await test.step("Submit payment", async () => {
-      const responsePromise = this.page.waitForResponse("**/transactions");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().endsWith("/transactions") &&
+          res.request().method() === "POST",
+      );
       await this.submitPaymentButton.click();
       await responsePromise;
     });
@@ -99,7 +113,11 @@ export class TransactionCreatePage extends BasePage {
 
   public async submitRequest(): Promise<void> {
     await test.step("Submit request", async () => {
-      const responsePromise = this.page.waitForResponse("**/transactions");
+      const responsePromise = this.page.waitForResponse(
+        (res) =>
+          res.url().endsWith("/transactions") &&
+          res.request().method() === "POST",
+      );
       await this.submitRequestButton.click();
       await responsePromise;
     });

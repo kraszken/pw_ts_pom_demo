@@ -21,9 +21,6 @@ export interface UpdateProfilePayload {
 }
 
 export class UserFactory {
-  /**
-   * Generuje losowy, kompletny payload użytkownika do rejestracji przez API.
-   */
   public static createRandomUserPayload(
     rolePrefix: string = "User",
   ): UserPayload {
@@ -46,9 +43,6 @@ export class UserFactory {
     };
   }
 
-  /**
-   * Generuje dane do aktualizacji profilu użytkownika.
-   */
   public static createUpdateProfilePayload(): UpdateProfilePayload {
     return {
       firstName: faker.person.firstName(),
