@@ -10,7 +10,7 @@ This project is designed to test the [Cypress Real World App (RWA)](https://gith
 
 - **Engine:** [Playwright](https://playwright.dev/)
 - **Language:** TypeScript
-- **Design Pattern:** Page Object Model (POM) + Playwright Fixtures
+- **Design Pattern:** Page Object Model (POM) + Playwright Fixtures + App Manager
 - **Data Generation:** [@faker-js/faker](https://fakerjs.dev/)
 - **Environment Management:** [dotenv](https://github.com/motdotla/dotenv)
 
@@ -34,7 +34,7 @@ Our test suite runs against a local instance of the Cypress Real World App. You 
 1. **Clone the target application repository:**
 
    ```bash
-   git clone https://github.com/cypress-io/cypress-realworld-app.git
+   git clone [https://github.com/cypress-io/cypress-realworld-app.git](https://github.com/cypress-io/cypress-realworld-app.git)
    cd cypress-realworld-app
    ```
 
@@ -105,7 +105,7 @@ npx playwright test --ui
 **Run a specific test file:**
 
 ```bash
-npx playwright test tests/01-login.spec.ts
+npx playwright test tests/ui/e2e/01-login.spec.ts
 ```
 
 **Run tests in headed mode (watch execution in the browser):**
@@ -126,14 +126,21 @@ npx playwright show-report
 
 ```text
 pw_ts_pom_demo/
-├── data/                  # Static test data & validation error messages
-├── fixtures/              # Playwright custom fixtures (e.g., test-base.ts)
-├── pages/                 # Page Object Models (POM) - Encapsulated UI logic
-├── tests/                 # E2E test specs (*.spec.ts)
-├── types/                 # TypeScript interfaces and models
-├── utils/                 # Global setup, teardown, and API client helpers
-├── playwright.config.ts   # Playwright framework configuration
-└── tsconfig.json          # TypeScript compiler configuration
+├── config/              # Environment & global configuration
+├── src/
+│   ├── api/             # API Clients, GraphQL queries & Models
+│   ├── factories/       # Data generation logic (@faker-js/faker)
+│   ├── fixtures/        # Playwright custom fixtures (test-base.ts)
+│   ├── test-data/       # Static test data & validation error messages
+│   └── ui/
+│       ├── components/  # Reusable atomic UI components
+│       └── pages/       # Page Object Models (POM) & AppManager
+├── tests/
+│   ├── api/             # API test specs
+│   ├── setup/           # Global setup (Healthcheck) & teardown
+│   └── ui/e2e/          # E2E test specs (*.spec.ts)
+├── playwright.config.ts # Playwright framework configuration
+└── tsconfig.json        # TypeScript compiler configuration
 ```
 
 ---
@@ -145,19 +152,19 @@ This framework strictly adheres to Senior SDET best practices to eliminate test 
 **1. Stateless & Atomic Tests (Test Independence):**
 Tests do not rely on pre-existing users or a shared state. The `ApiClient` dynamically seeds fresh, unique users and required backend states (like creating bank accounts via GraphQL or seeding transactions) in the `beforeEach` hooks. This guarantees that tests can run in absolute parallel without colliding.
 
-**2. Strict POM Encapsulation:**
+**2. The App Manager Pattern:**
+Individual spec files do not instantiate Page Objects directly. Instead, they use a centralized `AppManager` injected automatically via custom Playwright fixtures (`fixtures/test-base.ts`), drastically reducing boilerplate code.
 
-- **Private Actions:** UI interactable elements (inputs, buttons) are strictly typed as `private readonly`. Spec files cannot interact with the DOM directly.
-- **Public Locators for Assertions:** Locators required for state verification (e.g., success messages, error helpers) are typed as `public readonly` to utilize Playwright's native web-first assertions (`expect(locator).toBeVisible()`).
+**3. Strict POM Encapsulation:**
 
-**3. Business-Driven Workflows:**
-The Page Object Models do not contain redundant single-action wrappers (e.g., `fillEmail()`). Instead, they expose business-driven workflows (e.g., `updateProfile()`) grouped tightly under `test.step()` blocks for clean reporting and execution speed.
+- **Private Actions:** UI interactable elements (inputs, buttons) are strictly typed as `private readonly` or wrapped in reusable components (e.g., `InputComponent`). Spec files cannot interact with the DOM directly.
+- **Public Locators for Assertions:** Locators required for state verification are typed as `public readonly` to utilize Playwright's native web-first assertions (`expect(locator).toBeVisible()`).
 
-**4. Custom Fixture Injection:**
-Page instances are automatically instantiated and navigated via custom fixtures in `fixtures/test-base.ts`. This heavily reduces boilerplate code (DRY) in individual test files and ensures a clean, isolated setup for every test run.
+**4. Business-Driven Workflows:**
+The Page Object Models expose business-driven workflows (e.g., `updateProfile()`) grouped tightly under `test.step()` blocks for clean reporting and execution speed.
 
 ---
 
 ## 📊 Reporting and CI/CD Readiness
 
-The framework utilizes Playwright's built-in `html` reporter. Upon a test failure in a CI/CD environment (like GitHub Actions or GitLab CI), Playwright will automatically generate a full **Trace Viewer** file. This allows you to time-travel through the failed test, inspect DOM snapshots, console logs, and network intercepts. Retries are natively configured for CI runs (`retries: process.env.CI ? 2 : 0`).
+The framework utilizes Playwright's built-in `html` reporter. Upon a test failure in a CI/CD environment, Playwright will automatically generate a full **Trace Viewer** file. This allows you to time-travel through the failed test, inspect DOM snapshots, console logs, and network intercepts. Retries are natively configured for CI runs (`retries: ENV.CI ? 2 : 0`). Healthchecks are performed before suite execution to fail fast if the environment is down.
