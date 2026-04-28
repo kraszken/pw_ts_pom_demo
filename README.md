@@ -34,7 +34,7 @@ Our test suite runs against a local instance of the Cypress Real World App. You 
 1. **Clone the target application repository:**
 
    ```bash
-   git clone [https://github.com/cypress-io/cypress-realworld-app.git](https://github.com/cypress-io/cypress-realworld-app.git)
+   git clone https://github.com/cypress-io/cypress-realworld-app.git
    cd cypress-realworld-app
    ```
 
